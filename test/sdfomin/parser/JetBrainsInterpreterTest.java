@@ -2,10 +2,8 @@ package sdfomin.parser;
 
 import org.junit.jupiter.api.Test;
 
-import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 

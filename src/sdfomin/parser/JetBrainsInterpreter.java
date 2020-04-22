@@ -9,20 +9,21 @@ public class JetBrainsInterpreter {
     /**
      * table of variables in program
      */
-    private Map<String, Integer> varTable = new HashMap<>();
+    private final Map<String, Integer> varTable = new HashMap<>();
 
     /**
      * main program node
      */
-    private JetBrainsAstNode programNode;
+    private final JetBrainsAstNode programNode;
 
     /**
      * output of a program
      */
-    private ArrayList<Integer> output = new ArrayList<>();
+    private final ArrayList<Integer> output = new ArrayList<>();
 
     /**
      * constructor
+     *
      * @param programNode Program node
      */
     public JetBrainsInterpreter(JetBrainsAstNode programNode) {
@@ -33,6 +34,7 @@ public class JetBrainsInterpreter {
 
     /**
      * execute node
+     *
      * @param node node to execute
      * @return result of executing if needed
      * @throws InterpretException if has ParseErrors
@@ -50,6 +52,10 @@ public class JetBrainsInterpreter {
                 else
                     throw new InterpretException("Undeclared identifier");
             case EXPRESSION:
+            case STATEMENT:
+            case PROGRAM:
+            case BLOCK_STATEMENT:
+            case SIMPLE_EXPRESSION:
                 return executeNode(node.getChild(0));
             case CONDITION_EXPRESSION:
                 if (node.getText().equals("<")) {
@@ -67,10 +73,6 @@ public class JetBrainsInterpreter {
                     return executeNode(node.getChild(0)) * executeNode(node.getChild(1));
                 else
                     return executeNode(node.getChild(0)) / executeNode(node.getChild(1));
-            case SIMPLE_EXPRESSION:
-                return executeNode(node.getChild(0));
-            case STATEMENT:
-                return executeNode(node.getChild(0));
             case EXPRESSION_STATEMENT: // PRINT
                 int res = executeNode(node.getChild(0));
                 output.add(res);
@@ -82,10 +84,6 @@ public class JetBrainsInterpreter {
             case ASSIGN_STATEMENT:
                 varTable.put(node.getChild(0).getText(), executeNode(node.getChild(1)));
                 return varTable.get(node.getChild(0).getText());
-            case BLOCK_STATEMENT:
-                return executeNode(node.getChild(0));
-            case PROGRAM:
-                return executeNode(node.getChild(0));
             case STATEMENT_LIST:
                 for (int i = 0; i < node.childCount(); ++i)
                     executeNode(node.getChild(i));
@@ -99,6 +97,7 @@ public class JetBrainsInterpreter {
 
     /**
      * execute a program
+     *
      * @return output of a program
      * @throws InterpretException if program has ParseErrors
      */
@@ -109,6 +108,7 @@ public class JetBrainsInterpreter {
 
     /**
      * execute a program
+     *
      * @param programNode Program node to execute
      * @return output of a program
      * @throws InterpretException if program has ParseErrors

@@ -12,17 +12,17 @@ public class JetBrainsAstNode {
     /**
      *  type of node
      */
-    private JetBrainsAstNodeType type;
+    private final JetBrainsAstNodeType type;
 
     /**
      * additional information about node (integers, error messages, identifiers, operators)
      */
-    private String text;
+    private final String text;
 
     /**
      * children of node
      */
-    private List<JetBrainsAstNode> children = new ArrayList<>();
+    private final List<JetBrainsAstNode> children = new ArrayList<>();
 
     /**
      * construct a node

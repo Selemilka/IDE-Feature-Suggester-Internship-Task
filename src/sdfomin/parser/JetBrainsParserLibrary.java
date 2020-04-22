@@ -40,12 +40,4 @@ public class JetBrainsParserLibrary {
         for (var i : node.getChildren())
             printTree(i, x + 2);
     }
-
-    /**
-     * prints a tree of node in console
-     * @param node node to print
-     */
-    public static void printTree(JetBrainsAstNode node) {
-        printTree(node, 0);
-    }
 }

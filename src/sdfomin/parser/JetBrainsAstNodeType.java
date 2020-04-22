@@ -20,6 +20,6 @@ public enum JetBrainsAstNodeType {
     BLOCK_STATEMENT,
 
     PROGRAM,
-    STATEMENT_LIST;
+    STATEMENT_LIST
 
 }
