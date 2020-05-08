@@ -10,7 +10,7 @@ import java.util.List;
 public class JetBrainsAstNode {
 
     /**
-     *  type of node
+     * type of node
      */
     private final JetBrainsAstNodeType type;
 
@@ -26,30 +26,21 @@ public class JetBrainsAstNode {
 
     /**
      * construct a node
-     * @param type type of node
-     * @param text additional information
-     * @param child1 first child
-     * @param child2 second child
+     *
+     * @param type     type of node
+     * @param text     additional information
+     * @param children children nodes
      */
-    public JetBrainsAstNode(JetBrainsAstNodeType type, String text, JetBrainsAstNode child1, JetBrainsAstNode child2) {
+    public JetBrainsAstNode(JetBrainsAstNodeType type, String text, JetBrainsAstNode... children) {
         this.type = type;
         this.text = text;
-        if (child1 != null)
-            addChild(child1);
-        if (child2 != null)
-            addChild(child2);
+        for (var i : children)
+            if (i != null)
+                this.children.add(i);
     }
 
-    public JetBrainsAstNode(JetBrainsAstNodeType type, JetBrainsAstNode child1, JetBrainsAstNode child2) {
-        this(type, null, child1, child2);
-    }
-
-    public JetBrainsAstNode(JetBrainsAstNodeType type, JetBrainsAstNode child1) {
-        this(type, child1, null);
-    }
-
-    public JetBrainsAstNode(JetBrainsAstNodeType type, String text) {
-        this(type, text, null, null);
+    public JetBrainsAstNode(JetBrainsAstNodeType type, JetBrainsAstNode... children) {
+        this(type, null, children);
     }
 
     public JetBrainsAstNode(JetBrainsAstNodeType type) {
@@ -58,6 +49,7 @@ public class JetBrainsAstNode {
 
     /**
      * add child to a node
+     *
      * @param child child node
      */
     public void addChild(JetBrainsAstNode child) {
@@ -66,6 +58,7 @@ public class JetBrainsAstNode {
 
     /**
      * get child from node
+     *
      * @param index index of child node
      * @return child node
      */

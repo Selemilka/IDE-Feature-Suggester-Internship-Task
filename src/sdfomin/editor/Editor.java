@@ -1,14 +1,18 @@
 package sdfomin.editor;
 
-import sdfomin.parser.*;
+import sdfomin.parser.JetBrainsAstNode;
+import sdfomin.parser.JetBrainsInterpreter;
+import sdfomin.parser.JetBrainsParser;
+import sdfomin.parser.JetBrainsParserLibrary;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -123,11 +127,12 @@ class Editor extends JFrame implements ActionListener {
                     String program = e.getDocument().getText(0, e.getDocument().getLength());
                     JetBrainsParser updated = new JetBrainsParser(program);
                     JetBrainsAstNode nodeUpdated = updated.parse(); // try to parse for checking block statement update
-//                    JetBrainsTaskParser.printTree(nodeUpdated);
-                    if (JetBrainsParserLibrary.isBlockStatementUpdated(prev, nodeUpdated)) {
-                        textAreaLog.append("Added block statement \n");
+                    if (JetBrainsParserLibrary.isTreeUpdated(prev, nodeUpdated)) {
+                        if (JetBrainsParserLibrary.isBlockStatementUpdated(prev, nodeUpdated)) {
+                            textAreaLog.append("Created wrapped if\n");
+                        }
+                        prev = nodeUpdated;
                     }
-                    prev = nodeUpdated;
 
                 } catch (BadLocationException ex) {
                     ex.printStackTrace();

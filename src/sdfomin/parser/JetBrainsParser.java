@@ -152,7 +152,7 @@ public class JetBrainsParser {
      * @return one of four statements OR ParseError if can't parse
      */
     private JetBrainsAstNode statement() {
-        JetBrainsAstNode res;
+        JetBrainsAstNode res = null;
         try {
 
             if (isMatch("if")) { // IfStatement
@@ -183,10 +183,10 @@ public class JetBrainsParser {
                 match(";");
             }
         } catch (ParseException ex) {
-            return new JetBrainsAstNode(JetBrainsAstNodeType.PARSE_ERROR,
-                    ex.getMessage() + " in position " + ex.getErrorOffset());
+            return new JetBrainsAstNode(STATEMENT, new JetBrainsAstNode(JetBrainsAstNodeType.PARSE_ERROR,
+                    ex.getMessage() + " in position " + ex.getErrorOffset(), res));
         }
-        return res;
+        return new JetBrainsAstNode(STATEMENT, res);
     }
 
     /**
@@ -202,9 +202,10 @@ public class JetBrainsParser {
     /**
      * Find all expressions with type nodeType in current expression
      * with parsing nextExpression inside
+     *
      * @param nextExpression type of operands
-     * @param nodeType type of current expression
-     * @param terms operators of current expression
+     * @param nodeType       type of current expression
+     * @param terms          operators of current expression
      * @return nodeType parsed expression OR ParseError if can't parse
      */
     private JetBrainsAstNode countExpression(Supplier<JetBrainsAstNode> nextExpression,
