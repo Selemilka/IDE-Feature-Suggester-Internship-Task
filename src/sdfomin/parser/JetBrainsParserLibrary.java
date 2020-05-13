@@ -45,6 +45,7 @@ public class JetBrainsParserLibrary {
     public static boolean isBlockStatementUpdated(JetBrainsAstNode first, JetBrainsAstNode second) {
         Function<JetBrainsAstNode, Boolean> isComplexIf = (node ->
                 node.getType() == JetBrainsAstNodeType.IF_STATEMENT &&
+                        // node is BLOCK_STATEMENT and it's STATEMENT_LIST contains elements
                         node.getChild(1).getChild(0).getType() == JetBrainsAstNodeType.BLOCK_STATEMENT &&
                         node.getChild(1).getChild(0).getChild(0).getChildren().size() > 0);
 
@@ -65,31 +66,33 @@ public class JetBrainsParserLibrary {
         int res = 0;
         for (var x : node.getChildren()) {
 
-            if (x.getType() != JetBrainsAstNodeType.STATEMENT)
+            if (x.getType() != JetBrainsAstNodeType.STATEMENT ||
+                    x.getChild(0).getType() == JetBrainsAstNodeType.PARSE_ERROR) {
                 res += countIsTreeUpdated(x);
+                continue;
+            }
 
-            else if (x.getChild(0).getType() == JetBrainsAstNodeType.IF_STATEMENT &&
-                    x.getChild(0).getChild(1).getChild(0).getType() == JetBrainsAstNodeType.BLOCK_STATEMENT)
-                res += countIsTreeUpdated(x.getChild(0).getChild(1)) + 1;
-            else if (x.getChild(0).getType() == JetBrainsAstNodeType.IF_STATEMENT &&
-                    x.getChild(0).getChild(1).getChild(0).getType() == JetBrainsAstNodeType.IF_STATEMENT)
-                res += countIsTreeUpdated(x.getChild(0).getChild(1));
-            else if (x.getChild(0).getType() == JetBrainsAstNodeType.IF_STATEMENT &&
-                    x.getChild(0).getChild(1).getChild(0).getType() == JetBrainsAstNodeType.PARSE_ERROR)
-                res += countIsTreeUpdated(x.getChild(0).getChild(1));
-            else if (x.getChild(0).getType() == JetBrainsAstNodeType.IF_STATEMENT)
-                res += countIsTreeUpdated(x.getChild(0).getChild(1)) + 1;
+            JetBrainsAstNode statementNode = x.getChild(0);
+            if (statementNode.getType() != JetBrainsAstNodeType.IF_STATEMENT) {
+                res += countIsTreeUpdated(statementNode) + 1;
+                continue;
+            }
 
-            else if (x.getChild(0).getType() != JetBrainsAstNodeType.PARSE_ERROR)
-                res += countIsTreeUpdated(x) + 1;
+            JetBrainsAstNode ifStatementNode = statementNode.getChild(1).getChild(0);
+            if (ifStatementNode.getType() == JetBrainsAstNodeType.IF_STATEMENT ||
+                    ifStatementNode.getType() == JetBrainsAstNodeType.PARSE_ERROR)
+                res += countIsTreeUpdated(ifStatementNode);
             else
-                res += countIsTreeUpdated(x);
+                res += countIsTreeUpdated(ifStatementNode) + 1;
+
         }
         return res;
     }
 
     /**
      * Returns true if we should update a tree
+     * We should update tree if user added new statement and it isn't:
+     * IF_STATEMENT which contains not a BLOCK_STATEMENT
      *
      * @param first  first root node
      * @param second second root node
